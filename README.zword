@@ -1,0 +1,37 @@
+H	Zekaric: Manage Your Goal (ZMYGoal, My Goal)
+
+HH	Table Of Contents
+
+toc
+
+h	|chapter| - Summary
+
+	"My Goal" is a web based Goal or trend manager for an internal network.  The idea of the tool is to see a running stream of achievement over time.  This is a psychological trick to keep you motivated.
+
+h	|chapter| - Discussion
+
+	This is a python base web page.  The application is pretty simple.  Everyday you pick which goals you achieved for that day and it will be displayed and stored for that day.
+
+	The data storage is a simple file.  It is a text file with date and keys of which tasks were completed that day.
+
+	|b |Warning:| b| This program is not intended to be used on a public server and should only be run on a local machine or a local network.  It is also only a single person goal tracker and not meant for multiple people.
+
+h	|chapter| - Install
+
+	Copy the files to a browser accessable folder on your web server.
+
+	Point your browser to that folder and you should be done.
+
+	The only potential gotcha may be tha you will have to ...
+
+.[
+	chown www-data:www-data * 
+]
+
+	... and maybe ...
+
+.	chmod 755 *
+
+	... on the files in that folder for it to work properly.
+
+	On your web server you |b |will| b| need to set it up to work with python.  You will need to adjust the first line of index.py to point to the python executable of the webserver.
