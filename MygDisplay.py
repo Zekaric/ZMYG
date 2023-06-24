@@ -84,27 +84,47 @@ def _DisplayTaskList() -> str:
 
    value = "<table>\n"
 
-   # For all tasks...
+   # For all task records...
    for index in range(MygTaskList.GetCount()):
 
       # Get the task
       task = MygTaskList.GetAt(index)
 
+      # start the row.
       if (dayOfWeek == 5 or dayOfWeek == 6):
          value += "<tr class=rowAlt>"
       else:
          value += "<tr>"
       dayOfWeek = (dayOfWeek + 6) % 7
 
+      # display the date.  &#8209; is a non-breaking hyphen.
       value += f"<td class=mono>{task.GetDate().replace('-', '&#8209;')} </td><td class=fill>"
 
-      if (task.GetTypeCount() == 0):
-         value += "<img class=sized src=noTask.svg />"
-      else:
-         for index in range(task.GetTypeCount()):
-            typeItem = MygTypeList.FindById(task.GetTypeAt(index))
-            if (typeItem is not None):
-               value += f" {_GetSvg(typeItem)}"
+      # For all task types...
+      for typeIndex in range(MygTypeList.GetCount()):
+         # Get the type.
+         typeVal = MygTypeList.GetAt(typeIndex)
+
+         # Get the type id.
+         typeId = typeVal.GetId()
+
+         # For all tasks in the record...
+         isSet = False
+         for taskIndex in range(task.GetTypeCount()):
+
+            # Get the type of the task
+            taskTypeId = task.GetTypeAt(taskIndex)
+
+            # if a task is matching the id then break
+            if (taskTypeId == typeId):
+               isSet = True
+               break
+
+         # Display the task icon if needed.
+         if (not isSet):
+            value += " <img class=sized src=noTask.svg />"
+         else:
+            value += f" {_GetSvg(typeVal)}"
 
       value += "</td></tr>\n"
 

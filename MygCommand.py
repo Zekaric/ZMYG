@@ -9,11 +9,12 @@
 #
 # t             - toggle the task type for the current day.
 ###############################################################################
+"""Command processing routines"""
 
 ###############################################################################
 # imports:
 ###############################################################################
-import MygTask
+#import MygTask
 import MygTaskList
 
 ###############################################################################
@@ -21,6 +22,7 @@ import MygTaskList
 # constants
 ###############################################################################
 class COMMAND:
+   """Constants"""
    VALUE : str = 'val'
 
 ###############################################################################
@@ -30,14 +32,14 @@ class COMMAND:
 ###############################################################################
 # process the command.
 ###############################################################################
-def Process(param) -> bool:
-   """"""
+def Process(param : dict[str, list[str]]) -> bool:
+   """Process the command"""
 
    value = ""
 
    # For local debugging purposes.
    if (COMMAND.VALUE in param):
-      value   = param[COMMAND.VALUE][0]
+      value = param[COMMAND.VALUE][0]
 
    return _Process(value)
 

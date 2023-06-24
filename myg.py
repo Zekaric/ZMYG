@@ -17,11 +17,10 @@ import http.server
 import urllib.parse
 import os
 
+import MygCommand
 import MygDisplay
 import MygTaskList
 import MygTypeList
-
-import MygCommand
 
 ################################################################################
 # local
