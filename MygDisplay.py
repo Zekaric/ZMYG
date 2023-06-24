@@ -12,9 +12,11 @@
 ###############################################################################
 # imports:
 ###############################################################################
+import datetime
+
 import MygType
 import MygTypeList
-import MygTask
+#import MygTask
 import MygTaskList
 
 ###############################################################################
@@ -78,6 +80,8 @@ def _DisplayTypeList() -> str:
 ###############################################################################
 def _DisplayTaskList() -> str:
 
+   dayOfWeek = datetime.date.today().weekday()
+
    value = "<table>\n"
 
    # For all tasks...
@@ -86,14 +90,21 @@ def _DisplayTaskList() -> str:
       # Get the task
       task = MygTaskList.GetAt(index)
 
-      value += f"<tr><td class=mono>{task.GetDate().replace('-', '&#8209;')} </td><td class=fill>"
+      if (dayOfWeek == 5 or dayOfWeek == 6):
+         value += "<tr class=rowAlt>"
+      else:
+         value += "<tr>"
+      dayOfWeek = (dayOfWeek + 6) % 7
+
+      value += f"<td class=mono>{task.GetDate().replace('-', '&#8209;')} </td><td class=fill>"
 
       if (task.GetTypeCount() == 0):
          value += "<img class=sized src=noTask.svg />"
       else:
          for index in range(task.GetTypeCount()):
             typeItem = MygTypeList.FindById(task.GetTypeAt(index))
-            value += f" {_GetSvg(typeItem)}"
+            if (typeItem is not None):
+               value += f" {_GetSvg(typeItem)}"
 
       value += "</td></tr>\n"
 
