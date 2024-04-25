@@ -13,6 +13,7 @@
 # imports:
 ###############################################################################
 import datetime
+import calendar
 
 import MygType
 import MygTypeList
@@ -42,7 +43,7 @@ def Process() -> str:
  <body>
 """
 
-   value += _DisplayTypeList()
+   value += _DisplayTitle()
    value += _DisplayTaskList()
 
    value += """
@@ -58,77 +59,89 @@ def Process() -> str:
 ###############################################################################
 # Display the project list.
 ###############################################################################
-def _DisplayTypeList() -> str:
+def _DisplayTitle() -> str:
 
-   value = "  <h1>Zekaric : MYG Goals "
-
-   typeCount = MygTypeList.GetCount()
-   for index in range(typeCount):
-
-      typeItem: MygType.MygType = MygTypeList.GetAt(index)
-
-      button = _GetCmd(typeItem)
-
-      value += f"{button} "
-
-   value += "</h1>"
-
-   return value
+   return "  <h1>Zekaric : MYG Goals</h1>"
 
 ###############################################################################
 # Display the task list.
 ###############################################################################
 def _DisplayTaskList() -> str:
 
-   dayOfWeek = datetime.date.today().weekday()
+   value = """
+<table>
+ <tbody>
+  <tr>
+   <th>JAN</th>
+   <th>FEB</th>
+   <th>MAR</th>
+   <th>APR</th>
+   <th>MAY</th>
+   <th>JUN</th>
+   <th>JUL</th>
+   <th>AUG</th>
+   <th>SEP</th>
+   <th>OCT</th>
+   <th>NOV</th>
+   <th>DEC</th>
+  </tr><tr>
+"""
 
-   value = "<table>\n"
+   dayOfWeek = datetime.date(datetime.date.today().year, 1, 1).weekday()
 
-   # For all task records...
-   for index in range(MygTaskList.GetCount()):
+   # For all months...
+   for month in range(12):
 
-      # Get the task
-      task = MygTaskList.GetAt(index)
+      value += "<td>"
 
-      # start the row.
-      if (dayOfWeek == 5 or dayOfWeek == 6):
-         value += "<tr class=rowAlt>"
-      else:
-         value += "<tr>"
-      dayOfWeek = (dayOfWeek + 6) % 7
+      # For all days...
+      for day in range(calendar.monthrange(datetime.date.today().year, month + 1)[1]):
 
-      # display the date.  &#8209; is a non-breaking hyphen.
-      value += f"<td class=mono>{task.GetDate().replace('-', '&#8209;')} </td><td class=fill>"
-
-      # For all task types...
-      for typeIndex in range(MygTypeList.GetCount()):
-         # Get the type.
-         typeVal = MygTypeList.GetAt(typeIndex)
-
-         # Get the type id.
-         typeId = typeVal.GetId()
-
-         # For all tasks in the record...
-         isSet = False
-         for taskIndex in range(task.GetTypeCount()):
-
-            # Get the type of the task
-            taskTypeId = task.GetTypeAt(taskIndex)
-
-            # if a task is matching the id then break
-            if (taskTypeId == typeId):
-               isSet = True
-               break
-
-         # Display the task icon if needed.
-         if (not isSet):
-            value += " <img class=sized src=noTask.svg />"
+         # start the row.
+         if (dayOfWeek == 5 or dayOfWeek == 6):
+            value += "<p class=Alt>"
          else:
-            value += f" {_GetSvg(typeVal)}"
+            value += "<p>"
+         dayOfWeek = (dayOfWeek + 1) % 7
 
-      value += "</td></tr>\n"
+         # display the date.  &#8209; is a non-breaking hyphen.
+         value += f"<span class=\"text\">{day + 1:02d}&nbsp;&#8209;&nbsp;</span>"
 
-   value += "</table>\n"
+         # For all task types...
+         for typeIndex in range(MygTypeList.GetCount()):
+
+            # Get the type.
+            typeVal = MygTypeList.GetAt(typeIndex)
+
+            # Get the type id.
+            #typeId = typeVal.GetId()
+
+            # For all tasks in the record...
+            #isSet = False
+            #for taskIndex in range(task.GetTypeCount()):
+
+            #   # Get the type of the task
+            #   taskTypeId = task.GetTypeAt(taskIndex)
+
+            #   # if a task is matching the id then break
+            #   if taskTypeId == typeId:
+            #      isSet = True
+            #      break
+
+            # Display the task icon if needed.
+            #if not isSet:
+            #   value += "&nbsp;<img class=sized src=noTask.svg />"
+            #else:
+            value += f"&nbsp;<span class=\"img\">{_GetSvg(typeVal)}</span>"
+
+         value += "</p>\n"
+
+      value += "</td>\n"
+
+   value += """
+  </tr>
+ </tbody>
+</table>\n"""
 
    return value
 

@@ -26,8 +26,8 @@ Basic styles.
 :root
 {
    --pageMargin:        0.5rem;
-   --paraMargin:        0.9rem;
-   --tableSpacing:      0.5rem;
+   --paraMargin:        0.0rem;
+   --tableSpacing:      0.0rem;
    --linkColor:         #555;
    --linkHoverColor:    #888;
 }
@@ -41,10 +41,29 @@ form
 {
 }
 
+span.img
+{
+   vertical-align: middle;
+   display:        inline-block;
+}
+
+span.text
+{
+   vertical-align: middle;
+   display:        inline-block;
+}
+
 p
 {
    margin-bottom:       var(--paraMargin);
    font-size:           1rem;
+
+}
+p.Alt
+{
+   margin-bottom:       var(--paraMargin);
+   font-size:           1rem;
+   background-color:    #CCC;
 }
 
 table

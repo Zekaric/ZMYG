@@ -38,7 +38,7 @@ def Process(param : dict[str, list[str]]) -> bool:
    value = ""
 
    # For local debugging purposes.
-   if (COMMAND.VALUE in param):
+   if COMMAND.VALUE in param:
       value = param[COMMAND.VALUE][0]
 
    return _Process(value)
