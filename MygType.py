@@ -25,8 +25,9 @@ class MygType:
 
    def __init__(self, idVal: str = ""):
 
-      self._id:  str = idVal
-      self._svg: str = f"task{idVal}.svg"
+      self._id:     str = idVal
+      self._svg:    str = f"task{idVal}.svg"
+      self._svgSet: str = f"tset{idVal}.svg"
 
    def __eq__(self, other: object) -> bool:
       if (isinstance(other, MygType)):
@@ -62,8 +63,11 @@ class MygType:
       """Get the Type's id"""
       return self._id
 
-   def GetSvg(self) -> str:
+   def GetSvg(self, isSet: bool) -> str:
       """Get the Type's svg file"""
+      if isSet:
+         return self._svgSet
+
       return self._svg
 
 ###############################################################################

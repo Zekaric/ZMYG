@@ -15,6 +15,7 @@
 from io import TextIOWrapper
 import os
 import datetime
+import calendar
 
 import MygTask
 
@@ -34,16 +35,6 @@ class MygTaskList:
    _list: list[MygTask.MygTask] = []
 
    @classmethod
-   def AddOrSet(cls, task: MygTask.MygTask) -> None:
-      """Add or replace a task record"""
-      if   (len(cls._list) == 0):
-         cls._list.append(task)
-      elif (task.GetDate() == cls._list[0].GetDate()):
-         cls._list[0] = task
-      else:
-         cls._list.insert(0, task)
-
-   @classmethod
    def GetAt(cls, index: int) -> MygTask.MygTask:
       """Get a task record at a specific index"""
       return cls._list[index]
@@ -51,17 +42,14 @@ class MygTaskList:
    @classmethod
    def GetCount(cls) -> int:
       """Get the number of task records"""
-      return len(cls._list)
+      return 366
 
    @classmethod
    def FileLoad(cls) -> bool:
-      """Load the task order"""
+      """Load the task record"""
       # No project list yet.
       if (not os.path.exists(MYG_TASKLIST.FILE)):
          return False
-
-      # Clear anything that might currently exist
-      cls._list = []
 
       # Read in the file.
       file: TextIOWrapper
@@ -76,24 +64,18 @@ class MygTaskList:
       # For all lines in the file.
       lines       = fileContent.split('\n')
       fileContent = None
-      for line in lines:
+      for index in range(366):
 
-         # Create the task from the line
-         task = MygTask.CreateFromStr(line)
-         if (task is None):
-            continue
+         # Get the tasks of the day.
+         task = MygTaskList.GetAt(index)
 
-         # Append the task to the list.
-         cls._list.append(task)
-
-      cls._list.reverse()
+         # Set the task to what was stored.
+         task.SetFromStr(lines[index])
 
       return True
 
    @classmethod
    def FileStore(cls) -> bool:
-      """Store the task records in chrono order"""
-      cls._list.reverse()
 
       # Open the file for writing
       file = None
@@ -111,7 +93,21 @@ class MygTaskList:
       # clean up
       file.close()
 
-      cls._list.reverse()
+      return True
+
+   @classmethod
+   def Start(cls) -> bool:
+      """Fill the list for the entire year with unset task values."""
+      cls._list.clear()
+
+      # For all the days in the year.
+      for dayIndex in range(366):
+         # Create the empty task
+         task = MygTask.Create()
+
+         cls._list.append(task)
+
+      MygTaskList.FileLoad()
 
       return True
 
@@ -120,64 +116,11 @@ class MygTaskList:
 # function
 ###############################################################################
 ###############################################################################
-# Add a new or set if already present.
-###############################################################################
-def AddOrSet(task: MygTask.MygTask) -> None:
-   """Add a new task record"""
-   MygTaskList.AddOrSet(task)
-
-###############################################################################
-# Load in the tasks
-###############################################################################
-def FileLoad() -> bool:
-   """Load the task records"""
-   return MygTaskList.FileLoad()
-
-###############################################################################
 # Save the items
 ###############################################################################
-def FileStore() -> bool:
+def Store() -> bool:
    """Store the task records"""
    return MygTaskList.FileStore()
-
-###############################################################################
-# Fill missing records
-###############################################################################
-def FillMissing():
-   """Add missing value for days we missed."""
-
-   # create a brand new task, always today's date.
-   newTask = MygTask.Create()
-
-   # first time run, empty task list.  Add today's task.
-   if (MygTaskList.GetCount() == 0):
-      MygTaskList.AddOrSet(newTask)
-      MygTaskList.FileStore()
-      return
-
-   # get the last task in the list chronologically, top task.
-   task    = MygTaskList.GetAt(0)
-
-   # Check if they are the same...
-   if (task.GetDate() != newTask.GetDate()):
-      # they are not the same, fill in the missing days.
-      lastDT = datetime.date.fromisoformat(task.GetDate())
-      nowDT  = datetime.date.fromisoformat(newTask.GetDate())
-
-      missingDT = lastDT + datetime.timedelta(days=1)
-      while missingDT != nowDT:
-         missingTask = MygTask.Create()
-         missingTask.SetDate(missingDT.isoformat())
-
-         MygTaskList.AddOrSet(missingTask)
-
-         missingDT = missingDT + datetime.timedelta(days=1)
-
-      #Add today's task.
-      MygTaskList.AddOrSet(newTask)
-      MygTaskList.FileStore()
-
-   return
 
 ###############################################################################
 # Get the n'th task
@@ -187,15 +130,48 @@ def GetAt(index: int) -> MygTask.MygTask:
    return MygTaskList.GetAt(index)
 
 ###############################################################################
-# Get the size of the list.
-###############################################################################
-def GetCount() -> int:
-   """Get the number of task records"""
-   return MygTaskList.GetCount()
-
-###############################################################################
 # Start
 ###############################################################################
 def Start() -> bool:
    """Program start"""
-   return MygTaskList.FileLoad()
+   MygTaskList.Start()
+
+   todayMonth = datetime.date.today().month
+   todayDay   = datetime.date.today().day
+
+   # Reset the leap day.
+   if todayMonth == 2 and todayDay > 22:
+      task = MygTaskList.GetAt(365)
+      task.ResetFlag()
+
+   # Get today's year day number.
+   todayYDay = datetime.date.today().timetuple().tm_yday - 1
+   if calendar.isleap(datetime.date.today().year):
+      todayYDay -= 1
+
+   # wipe the next 7 days of the year.
+   todayYDay = (todayYDay + 1) % 365;
+   task = MygTaskList.GetAt(todayYDay)
+   task.ResetFlag()
+   todayYDay = (todayYDay + 1) % 365;
+   task = MygTaskList.GetAt(todayYDay)
+   task.ResetFlag()
+   todayYDay = (todayYDay + 1) % 365;
+   task = MygTaskList.GetAt(todayYDay)
+   task.ResetFlag()
+   todayYDay = (todayYDay + 1) % 365;
+   task = MygTaskList.GetAt(todayYDay)
+   task.ResetFlag()
+   todayYDay = (todayYDay + 1) % 365;
+   task = MygTaskList.GetAt(todayYDay)
+   task.ResetFlag()
+   todayYDay = (todayYDay + 1) % 365;
+   task = MygTaskList.GetAt(todayYDay)
+   task.ResetFlag()
+   todayYDay = (todayYDay + 1) % 365;
+   task = MygTaskList.GetAt(todayYDay)
+   task.ResetFlag()
+
+   MygTaskList.FileStore()
+
+   return True

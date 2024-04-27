@@ -120,9 +120,6 @@ if __name__ == "__main__":
    MygTypeList.Start()
    MygTaskList.Start()
 
-   # Ensure continuity
-   MygTaskList.FillMissing()
-
    # Start the server.
    webServer = http.server.HTTPServer((HOST_NAME, PORT_NUM), MygServer)
    print(f"Server start: http://{HOST_NAME}:{PORT_NUM}")

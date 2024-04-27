@@ -25,8 +25,6 @@
 
 <h1 class="zword"><a name="2">2 - Discussion</a></h1>
 <p class="zword">This is a simple python base web application.  Everyday you pick which goals you achieved for that day and it will be displayed and stored for that day.</p>
-<p class="zword">The data storage is a simple file.  It is a text file with date and keys of which tasks were completed that day.</p>
-<p class="zword"><strong>Warning:</strong> This program is not intended to be used on a public server and should only be run on a local machine or a local network.  It is also only a single person goal tracker and not meant for multiple people.</p>
 
 
 <h1 class="zword"><a name="3">3 - Install</a></h1>
@@ -38,10 +36,13 @@
 <p class="zword">Point your browser to the http://... address that the new command prompt is showing.  If the program is unchanged it will be...</p>
 <p class="zwordPre">	http://localhost:8001
 </p>
-<p class="zword">From there it will show you the past days and what you selected.  Click on an icon next to the title to set the tasks you did today.  Click the same icon if you made a mistake an need to remove a task.</p>
+<p class="zword">From there it will show you the entire year and what you did for a given day will be an icon of a different color.  Click on an icon on the day set or reset that icon.  The current day is marked in orange.  The next seven days from the current day will be wiped clean.</p>
 <p class="zword"><strong>How to add or change tasks?</strong></p>
-<p class="zword">Tasks are basically the svg files that start with the word "task".  The code saved to the myg.dat will be the rest of the file name for that file.  Very simple system.  Use your favorite vector program to create your svg files.</p>
-<p class="zword">myg.dat is a simple text file where one record is stored per day.  A record is one line, starting with an ISO date and tab delimited codes for the tasks performed that day.</p>
+<p class="zword">Tasks are basically the svg files that start with the word "task" and "tset".  task* images are the icons for when something is not done.  tset* images are the icons for when something was done.</p>
+<p class="zword">myg.dat is a simple file that stores your data.  It will be created and updated once you make a change.  It is a text file with 366 lines, where each row is a day of the year and the last row represents Feb 29.  Each row has a string of text representing an X for a task that was completed that day and a - for when it was not.  The order of the X and - would be the same order of the tasks when they are listed alphabetically.</p>
+<p class="zword">This does mean that eventually old records will be overwritten when another year rolls around.</p>
+<p class="zword">It will also mean that if you change the number of tasks you are keeping track of changes, then the order and the X and - values may not match up.  Since this isn't exactly critical record keeping, I am not concerned about it.  Wipe the .dat file and start over.</p>
+<p class="zword"><strong>Warning:</strong> This program is not intended to be used on a public server and should only be run on a local machine or a local network.  It is also only a single person goal tracker and not meant for multiple people.</p>
 <p class="zword">I find going very 'general' with your tracking is best.  I would not break down the tasks to include more specifics.  For me, my tasks were as follows.</p>
 <p class="zword"><strong>Art</strong> - Anything creative like, writing, drawing, painting, etc.</p>
 <p class="zword"><strong>Dev</strong> - Any programming as a hobby that I do.  It doesn't matter what project I'm working on, just that I am doing development and it's on my time and my project.</p>

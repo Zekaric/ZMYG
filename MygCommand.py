@@ -23,7 +23,8 @@ import MygTaskList
 ###############################################################################
 class COMMAND:
    """Constants"""
-   VALUE : str = 'val'
+   DAY : str = 'day'
+   TYPE: str = 'type'
 
 ###############################################################################
 # global
@@ -35,13 +36,16 @@ class COMMAND:
 def Process(param : dict[str, list[str]]) -> bool:
    """Process the command"""
 
-   value = ""
+   day  = ""
+   type = ""
 
    # For local debugging purposes.
-   if COMMAND.VALUE in param:
-      value = param[COMMAND.VALUE][0]
+   if COMMAND.DAY  in param:
+      day  = param[COMMAND.DAY][0]
+   if COMMAND.TYPE in param:
+      type = param[COMMAND.TYPE][0]
 
-   return _Process(value)
+   return _Process(day, type)
 
 ###############################################################################
 # local
@@ -50,13 +54,15 @@ def Process(param : dict[str, list[str]]) -> bool:
 ###############################################################################
 # Process the command string.
 ###############################################################################
-def _Process(value: str) -> bool:
+def _Process(day: str, type: str) -> bool:
 
-   task = MygTaskList.GetAt(0)
+   dayIndex  = int(day);
+   typeIndex = int(type);
 
-   task.SetType(value)
+   task = MygTaskList.GetAt(dayIndex)
+   task.Setflag(typeIndex, not task.GetFlag(typeIndex))
 
-   MygTaskList.FileStore()
+   MygTaskList.Store()
 
    # Unknown command
    return False

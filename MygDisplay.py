@@ -15,9 +15,7 @@
 import datetime
 import calendar
 
-import MygType
 import MygTypeList
-#import MygTask
 import MygTaskList
 
 ###############################################################################
@@ -87,7 +85,14 @@ def _DisplayTaskList() -> str:
   </tr><tr>
 """
 
+   dayOfYear = 0
    dayOfWeek = datetime.date(datetime.date.today().year, 1, 1).weekday()
+
+   todayMonth = datetime.date.today().month - 1
+   todayDay   = datetime.date.today().day - 1
+
+   isLeapDay  = False
+   isLeapYear = False
 
    # For all months...
    for month in range(12):
@@ -97,44 +102,51 @@ def _DisplayTaskList() -> str:
       # For all days...
       for day in range(calendar.monthrange(datetime.date.today().year, month + 1)[1]):
 
+         # Test for leap years
+         if month == 1 and day == 28:
+            isLeapDay  = True;
+            isLeapYear = True;
+
+         isToday = False
+         if month == todayMonth and day == todayDay:
+            isToday = True
+
          # start the row.
-         if (dayOfWeek == 5 or dayOfWeek == 6):
+         if   isToday:
+            value += "<p class=Now>"
+         elif dayOfWeek == 5 or dayOfWeek == 6:
             value += "<p class=Alt>"
          else:
             value += "<p>"
          dayOfWeek = (dayOfWeek + 1) % 7
 
          # display the date.  &#8209; is a non-breaking hyphen.
-         value += f"<span class=\"text\">{day + 1:02d}&nbsp;&#8209;&nbsp;</span>"
+         value += f"<span class=\"text\">{day + 1:02d}&nbsp;</span>"
+
+         # Get the tasks of the day.
+         dayIndex = dayOfYear
+         if isLeapYear and not isLeapDay:
+            dayIndex = dayOfYear - 1
+         # leap year day is day 365.  This is just so that at year change all
+         # the pasy year's days are in the right place.
+         elif isLeapYear and isLeapDay:
+            dayIndex = 365
+
+         task = MygTaskList.GetAt(dayIndex)
 
          # For all task types...
          for typeIndex in range(MygTypeList.GetCount()):
 
-            # Get the type.
-            typeVal = MygTypeList.GetAt(typeIndex)
-
-            # Get the type id.
-            #typeId = typeVal.GetId()
-
             # For all tasks in the record...
-            #isSet = False
-            #for taskIndex in range(task.GetTypeCount()):
-
-            #   # Get the type of the task
-            #   taskTypeId = task.GetTypeAt(taskIndex)
-
-            #   # if a task is matching the id then break
-            #   if taskTypeId == typeId:
-            #      isSet = True
-            #      break
+            isSet = task.GetFlag(typeIndex)
 
             # Display the task icon if needed.
-            #if not isSet:
-            #   value += "&nbsp;<img class=sized src=noTask.svg />"
-            #else:
-            value += f"&nbsp;<span class=\"img\">{_GetSvg(typeVal)}</span>"
+            value += f"&nbsp;<span class=\"img\">{_GetCmd(dayIndex, typeIndex, isSet)}</span>"
 
          value += "</p>\n"
+
+         dayOfYear += 1
+         isLeapDay  = False;
 
       value += "</td>\n"
 
@@ -148,13 +160,15 @@ def _DisplayTaskList() -> str:
 ###############################################################################
 # Convenience function for displaying a simple button form.
 ###############################################################################
-def _GetCmd(typeItem: MygType.MygType) -> str:
+def _GetCmd(dayIndex: int, typeIndex: int, isSet: bool) -> str:
 
-   return f"""<a href="?val={typeItem.GetId()}">{_GetSvg(typeItem)}</a>"""
+   return f"""<a href="?day={dayIndex}&type={typeIndex}">{_GetSvg(typeIndex, isSet)}</a>"""
 
 ###############################################################################
 # Convenience function to get a bit image.
 ###############################################################################
-def _GetSvg(typeItem: MygType.MygType) -> str:
+def _GetSvg(typeIndex: int, isSet: bool) -> str:
 
-   return f"<img class=sized src={typeItem.GetSvg()} />"
+   typeItem = MygTypeList.GetAt(typeIndex)
+
+   return f"<img class=sized src={typeItem.GetSvg(isSet)} />"

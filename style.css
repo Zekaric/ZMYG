@@ -63,7 +63,13 @@ p.Alt
 {
    margin-bottom:       var(--paraMargin);
    font-size:           1rem;
-   background-color:    #CCC;
+   background-color:    #DDD;
+}
+p.Now
+{
+   margin-bottom:       var(--paraMargin);
+   font-size:           1rem;
+   background-color:    #f80;
 }
 
 table
